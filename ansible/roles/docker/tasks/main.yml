@@ -13,8 +13,7 @@
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-# Original Author: 13uddz & Desmonic
-# URL:             https://cloudbox.rocks
+# Original Author: 13uddz & Desmonic - cloudbox.rocks
 #################################################################################
 
 ---
@@ -36,7 +35,7 @@
 
 - name: Installing docker
   apt:    
-    name: docker-ce=18.03.0~ce-0~ubuntu
+    name: docker-ce=18.03.1~ce-0~ubuntu
     state: present
     force: yes
     update_cache: yes

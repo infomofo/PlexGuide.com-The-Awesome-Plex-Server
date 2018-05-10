@@ -18,7 +18,12 @@
 ---
 - include_role:
     name: variables
-    
+
+- name: Register IP
+  shell: "cat /var/plexguide/nc.info"
+  register: ncinfo
+  ignore_errors: True
+
 - name: Create required directories
   file: "path={{item}} state=directory mode=0775 owner=1000 group=1000"
   with_items:
@@ -27,7 +32,7 @@
     - /opt/appdata/nextcloud/data
     - /opt/appdata/nextcloud/mariadb
 
-- name: Destory NextCloud Container
+- name: Destroy NextCloud Container
   docker_container:
     name: next
     state: absent
@@ -42,7 +47,7 @@
     env:
       PUID: 1000
       PGID: 1000
-      MYSQL_ROOT_PASSWORD: "password321"
+      MYSQL_ROOT_PASSWORD: "{{ncinfo.stdout}}"
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "/opt/appdata/nextcloud/mariadb:/config"
@@ -79,5 +84,6 @@
     labels:
       traefik.enable: "true"
       traefik.frontend.redirect.entryPoint: "https"
-      traefik.frontend.rule: "Host:nextcloud.{{domain.stdout}}"
+      traefik.frontend.rule: "Host:nextcloud.{{domain.stdout}},next.{{domain.stdout}}"
       traefik.port: "443"
+      traefik.protocol: "https"

@@ -16,10 +16,6 @@
 #
 #################################################################################
 export NCURSES_NO_UTF8_ACS=1
-## point to variable file for ipv4 and domain.com
-source <(grep '^ .*='  /opt/appdata/plexguide/var.sh)
-echo $ipv4
-domain=$( cat /var/plexguide/server.domain )
 
 HEIGHT=9
 WIDTH=38
@@ -45,32 +41,27 @@ case $CHOICE in
             port=9000
             dialog --infobox "Installing: $display" 3 30
             ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags portainer &>/dev/null &
-            sleep 2
-            cronskip="yes"
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
             ;;
         B)
             bash /opt/plexguide/menus/traefik/main.sh
             bash /opt/plexguide/menus/programs/critical.sh
-            cronskip="yes"
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
             exit
             ;;   
         Z)
             exit 0 ;;
 esac
-
-
-########## Cron Job a Program
-echo "$program" > /var/program_var
-if [ "$cronskip" == "yes" ]; then
-    clear 1>/dev/null 2>&1
-else
-    bash /opt/plexguide/menus/backup/main.sh
-fi 
-
-########## Ending Notifcation Script
-echo "$program" > /tmp/program
-echo "$port" > /tmp/port
-bash /opt/plexguide/menus/programs/ending.sh
 
 #### recall itself to loop unless user exits
 bash /opt/plexguide/menus/programs/critical.sh

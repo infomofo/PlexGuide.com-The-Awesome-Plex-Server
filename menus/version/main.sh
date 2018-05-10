@@ -18,20 +18,22 @@
 export NCURSES_NO_UTF8_ACS=1
 clear
 
-HEIGHT=15
+HEIGHT=17
 WIDTH=33
-CHOICE_HEIGHT=8
+CHOICE_HEIGHT=10
 BACKTITLE="Visit https://PlexGuide.com - Automations Made Simple"
 TITLE="Select A PlexGuide Version"
 MENU="Make a Selection:"
- 
-OPTIONS=(A "Developer: 5.072"
-         B "Stable   : 5.071"
-         C "Stable   : 5.070"
-         D "Stable   : 5.069"
-         E "Stable   : 5.068"
-         F "Stable   : 5.067"
-         G "Stable   : 5.066"
+
+OPTIONS=(A "Developer: 5.079"
+         B "Stable   : 5.078"
+         C "Stable   : 5.077"
+         D "Stable   : 5.075"
+         E "Stable   : 5.072"
+         F "Stable   : 5.071"
+         G "Stable   : 5.070"
+         H "Stable   : 5.069"
+         I "Stable   : 5.068"
          Z "Exit")
 
 CHOICE=$(dialog --clear \
@@ -77,22 +79,28 @@ case $CHOICE in
             exit 0 ;;
         B)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.071" ;;
+            version="5.078" ;;  
         C)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.070" ;;
+            version="5.077" ;;        
         D)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.069" ;;
+            version="5.075" ;;
         E)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.068" ;;
+            version="5.072p1" ;;
         F)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.067" ;;
+            version="5.071" ;;
         G)
             touch /var/plexguide/ask.yes 1>/dev/null 2>&1
-            version="5.066p11" ;;
+            version="5.070" ;;
+        H)
+            touch /var/plexguide/ask.yes 1>/dev/null 2>&1
+            version="5.069" ;;
+        I)
+            touch /var/plexguide/ask.yes 1>/dev/null 2>&1
+            version="5.068" ;;
         Z)
             bash /opt/plexguide/menus/main.sh
             exit 0

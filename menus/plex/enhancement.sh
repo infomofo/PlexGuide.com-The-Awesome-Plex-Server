@@ -18,15 +18,16 @@
 export NCURSES_NO_UTF8_ACS=1
  ## point to variable file for ipv4 and domain.com
 
-HEIGHT=10
+HEIGHT=12
 WIDTH=40
-CHOICE_HEIGHT=4
+CHOICE_HEIGHT=5
 BACKTITLE="Visit https://PlexGuide.com - Automations Made Simple"
-TITLE="Plex Installer"
+TITLE="Plex Enhacements Tools"
 MENU="Make a Selection:"
 
-OPTIONS=(A "Generate a PlexToken"
-         B "Install DupeFinder"
+OPTIONS=(A "PGDupes (BETA)"
+         B "PGTrak  (BETA)"
+         C "Telly   (BETA)"
          Z "Exit")
 
 CHOICE=$(dialog --clear \
@@ -40,11 +41,13 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         A)
-            bash /opt/plexguide/scripts/plextoken/main.sh
+            bash /opt/plexguide/menus/pgdupes/main.sh
             ;;
-
         B)
-            ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags dupefinder
+            bash /opt/plexguide/menus/pgtrak/main.sh
+            ;;
+        C)
+            bash /opt/plexguide/menus/plex/telly.sh
             ;;
         Z)
             clear

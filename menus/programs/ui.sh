@@ -15,12 +15,7 @@
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-
 export NCURSES_NO_UTF8_ACS=1
- ## point to variable file for ipv4 and domain.com
-source <(grep '^ .*='  /opt/appdata/plexguide/var.sh)
-echo $ipv4
-domain=$( cat /var/plexguide/server.domain )
 
  HEIGHT=11
  WIDTH=38
@@ -49,8 +44,12 @@ case $CHOICE in
       dialog --infobox "Installing: $display" 3 30
       port=1111
       ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags heimdall &>/dev/null &
-      sleep 2
-      cronskip=no
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
       ;;
     B)
       program=htpcmanager
@@ -58,8 +57,12 @@ case $CHOICE in
       dialog --infobox "Installing: $display" 3 30
       port=8085
       ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags htpcmanager &>/dev/null &
-      sleep 2
-      cronskip=no
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
       ;;
     C)
       program=muximux
@@ -67,8 +70,12 @@ case $CHOICE in
       dialog --infobox "Installing: $display" 3 30
       port=8015
       ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags muximux &>/dev/null &
-      sleep 2
-      cronskip=no
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
       ;;
 
     D)
@@ -77,27 +84,18 @@ case $CHOICE in
       dialog --infobox "Installing: $display" 3 30
       port=8020
       ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags organizr &>/dev/null &
-      sleep 2 
-      cronskip=no
+        sleep 3
+            echo "$program" > /tmp/program
+            echo "$program" > /tmp/program_var
+            echo "$port" > /tmp/port
+            bash /opt/plexguide/menus/time/cron.sh
+            bash /opt/plexguide/menus/programs/ending.sh
       ;;
     Z)
        exit 0 ;;
 esac
 
     clear
-
-########## Cron Job a Program
-echo "$program" > /tmp/program_var
-if [ "$cronskip" == "yes" ]; then
-    clear 1>/dev/null 2>&1
-else
-    bash /opt/plexguide/menus/backup/main.sh
-fi 
-
-echo "$program" > /tmp/program
-echo "$port" > /tmp/port
-#### Pushes Out Ending
-bash /opt/plexguide/menus/programs/ending.sh
 
 #### recall itself to loop unless user exits
 bash /opt/plexguide/menus/programs/ui.sh

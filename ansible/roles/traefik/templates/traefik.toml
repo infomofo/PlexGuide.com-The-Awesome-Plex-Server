@@ -29,6 +29,8 @@
 # Accepted values, in order of severity: "DEBUG", "INFO", "WARN", "ERROR", "FATAL", "PANIC"
 # Messages at and above the selected level will be logged.
 #
+insecureskipverify = true
+
 logLevel = "WARN"
 
 defaultEntryPoints = ["http", "https"]
@@ -93,7 +95,6 @@ sans = [
     "netdata.yourdomain.com",
     "nzbget.yourdomain.com",
     "nzbhydra.yourdomain.com",
-    "nzbhydra2.yourdomain.com",
     "ombi.yourdomain.com",
     "ombi4k.yourdomain.com",
     "organizr.yourdomain.com",

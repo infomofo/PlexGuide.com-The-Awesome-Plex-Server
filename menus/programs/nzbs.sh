@@ -15,23 +15,17 @@
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-
 export NCURSES_NO_UTF8_ACS=1
-## point to variable file for ipv4 and domain.com
-source <(grep '^ .*='  /opt/appdata/plexguide/var.sh)
-echo $ipv4
-domain=$( cat /var/plexguide/server.domain )
 
-HEIGHT=11
+HEIGHT=10
 WIDTH=38
-CHOICE_HEIGHT=6
+CHOICE_HEIGHT=4
 BACKTITLE="Visit PlexGuide.com - Automations Made Simple"
 TITLE="NZB Applications - PG Supporting"
 
 OPTIONS=(A "NZBGet"
-         B "NZBHydra"
-         C "NZBHydra2"
-         D "SABNZBD"
+         B "NZBHydra v2"
+         C "SABNZBD"
          Z "Exit")
 
 CHOICE=$(dialog --backtitle "$BACKTITLE" \
@@ -43,93 +37,48 @@ CHOICE=$(dialog --backtitle "$BACKTITLE" \
 
 case $CHOICE in
         A)
-            file="/var/plexguide/nzb.discount2" 1>/dev/null 2>&1
-              if [ -e "$file" ]
-                then
-                bash /opt/plexguide/menus/nzb/main33.sh
-                else
-              touch /var/plexguide/nzb.discount2
-              bash /opt/plexguide/menus/nzb/main.sh
-              fi
             display=NZBGET
             program=nzbget
             dialog --infobox "Installing: $display" 3 30
             port=6789
             ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags nzbget &>/dev/null &
-            sleep 2
-            cronskip=no
+              sleep 3
+              echo "$program" > /tmp/program
+              echo "$program" > /tmp/program_var
+              echo "$port" > /tmp/port
+              bash /opt/plexguide/menus/time/cron.sh
+              bash /opt/plexguide/menus/programs/ending.sh
             ;;
         B)
-            file="/var/plexguide/nzb.discount2" 1>/dev/null 2>&1
-              if [ -e "$file" ]
-                then
-                bash /opt/plexguide/menus/nzb/main33.sh
-                else
-              touch /var/plexguide/nzb.discount2
-              bash /opt/plexguide/menus/nzb/main.sh
-              fi
-            bash /opt/plexguide/menus/nzb/main33.sh
-            display=NZBHYDRA
-            program=nzbhydra
-            dialog --infobox "Installing: $display" 3 30
-            port=5075
-            ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags nzbhydra &>/dev/null &
-            sleep 2
-            cronskip=no
-            ;;
-        C)
-            file="/var/plexguide/nzb.discount2" 1>/dev/null 2>&1
-              if [ -e "$file" ]
-                then
-                bash /opt/plexguide/menus/nzb/main33.sh
-                else
-              touch /var/plexguide/nzb.discount2
-              bash /opt/plexguide/menus/nzb/main.sh
-              fi
-            bash /opt/plexguide/menus/nzb/main33.sh
-            display=NZBHYRA2
-            program=nzbhyra2
+            display=NZBHYDRA2
+            program=nzbhydra2
             dialog --infobox "Installing: $display" 3 30
             port=5076
             ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags nzbhydra2 &>/dev/null &
-            sleep 2
-            cronskip=no
+              sleep 3
+              echo "$program" > /tmp/program
+              echo "$program" > /tmp/program_var
+              echo "$port" > /tmp/port
+              bash /opt/plexguide/menus/time/cron.sh
+              bash /opt/plexguide/menus/programs/ending.sh
             ;;
-        D)
-            file="/var/plexguide/nzb.discount2" 1>/dev/null 2>&1
-              if [ -e "$file" ]
-                then
-                bash /opt/plexguide/menus/nzb/main33.sh
-                else
-              touch /var/plexguide/nzb.discount2
-              bash /opt/plexguide/menus/nzb/main.sh
-              fi
-            bash /opt/plexguide/menus/nzb/main33.sh
+        C)
             display=SABNZBD
             program=sabnzbd
             dialog --infobox "Installing: $display" 3 30
             port=8090
             ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags sabnzbd &>/dev/null &
-            sleep 2
-            cronskip=no
+              sleep 3
+              echo "$program" > /tmp/program
+              echo "$program" > /tmp/program_var
+              echo "$port" > /tmp/port
+              bash /opt/plexguide/menus/time/cron.sh
+              bash /opt/plexguide/menus/programs/ending.sh
             ;;
 
         Z)
             exit 0 ;;
 esac
-
-########## Cron Job a Program
-echo "$program" > /tmp/program_var
-if [ "$cronskip" == "yes" ]; then
-    clear 1>/dev/null 2>&1
-else
-    bash /opt/plexguide/menus/backup/main.sh
-fi 
-
-echo "$program" > /tmp/program
-echo "$port" > /tmp/port
-#### Pushes Out Ending
-bash /opt/plexguide/menus/programs/ending.sh
 
 #### recall itself to loop unless user exits
 bash /opt/plexguide/menus/programs/nzbs.sh

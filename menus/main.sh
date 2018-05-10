@@ -1,4 +1,4 @@
-d#!/bin/bash
+#!/bin/bash
 #
 # [PlexGuide Menu]
 #
@@ -15,12 +15,11 @@ d#!/bin/bash
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-#hostname -I | awk '{print $1}' > /var/plexguide/server.ip
+export NCURSES_NO_UTF8_ACS=1
+
 edition=$( cat /var/plexguide/pg.edition ) 1>/dev/null 2>&1
 version=$( cat /var/plexguide/pg.version ) 1>/dev/null 2>&1
 
-export NCURSES_NO_UTF8_ACS=1
-clear
 HEIGHT=18
 WIDTH=40
 CHOICE_HEIGHT=12
@@ -68,9 +67,8 @@ case $CHOICE in
             bash /opt/plexguide/scripts/message/ending.sh
             exit 0 ;;
         J)
-            rm -r /var/plexguide/pg.edition
             bash /opt/plexguide/scripts/baseinstall/edition.sh
-            exit 0 ;;
+            ;;
         K)
             bash /opt/plexguide/menus/donate/main.sh ;;
         Z)

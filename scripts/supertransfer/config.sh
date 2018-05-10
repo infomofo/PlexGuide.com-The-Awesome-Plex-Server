@@ -1,33 +1,25 @@
 #!/bin/bash
-source init.sh
-source rcloneupload.sh
-source settings.conf
-source spinner.sh
+source /opt/plexguide/scripts/supertransfer/init.sh
+source /opt/plexguide/scripts/supertransfer/rcloneupload.sh
+source /opt/plexguide/scripts/supertransfer/settings.conf
+source /opt/plexguide/scripts/supertransfer/spinner.sh
 
-declare -a reqlist=(rclone awk sed egrep grep echo printf find sort)
+declare -a reqlist=(rclone awk sed egrep grep echo printf find sort tee python3)
 for app in $reqlist; do
-  [[ $(which $app) ]] || echo -e "$app dependency not met/nPlease install $app"
-  [[ $(which $app) ]] || exit 1
+  [[ ! $(which $app) ]] && echo -e "$app dependency not met/nPlease install $app" && exit 1
 done
 
-
-#if [[ $@ =~ [--help|-h] ]
-# init
-if [[ $@ =~ --pw=durdle || -e /opt/appdata/plexguide/.rclone ]]; then
 cat_Secret_Art
-else
-cat_Art
-fi
 
 if [[ $@ =~ --purge-rclone ]]; then
   purge_Rclone
 fi
 
 # source settings
-[[ ! -d $jsonPath ]] && mkdir $jsonPath
-[[ ! -d $logDir ]] || mkdir $logDir
-[[ ! -e $userSettings ]] && cp usersettings_template_dont_edit ${jsonPath}/usersettings.conf
-[[ ! -e ${jsonPath}/auto-rename-my-keys.sh ]] && cp auto-rename-my-keys.sh $jsonPath
+[[ ! -d $jsonPath ]] && mkdir $jsonPath &>/dev/null
+[[ ! -d $logDir ]] || mkdir $logDir &>/dev/null
+[[ ! -e $userSettings ]] && cp /opt/plexguide/scripts/supertransfer/usersettings_template_dont_edit ${userSettings}
+[[ ! -e ${jsonPath}/auto-rename-my-keys.sh ]] && cp /opt/plexguide/scripts/supertransfer/auto-rename-my-keys.sh $jsonPath
 [[ ! -e $userSettings ]] && echo "Config at $userSettings Could Not Be Created."
 source $userSettings
 
@@ -50,6 +42,11 @@ if [[ ! $(ls $jsonPath | egrep .json$)  ]]; then
     fi
 elif [[ $@ =~ "--config" ]]; then
   upload_Json
+else
+  read -p 'Looks Like you have Service Keys Already. Configure More? y/n>' answer
+    if [[ $answer =~ [y|Y|yes|Yes] || $answer == "" ]];then
+      upload_Json
+    fi
 fi
 
 
@@ -71,9 +68,8 @@ function configure_email(){
 function configure_teamdrive(){
 source $userSettings
   if [[ -z $teamDrive ]]; then
-      log "No Teamdrive Configured in: userSettings.conf" WARN
+      log "No Teamdrive Configured in: usersettings.conf" WARN
 cat <<EOF
-NOTE: this method doesn't work with personal gdrives.
 
 a) If you already have data in a personal drive, you can
    easily copy it over to the team drive.
@@ -81,10 +77,11 @@ b) If you are using plexdrive, you need to migrate to rclone cache (to support T
 
 Additional limitations: 1) Only 250,000 files allowed per teamdrive
                         2) Folders may only be 20 directories deep
+
 ########## INSTRUCTIONS ###################################
 1) Make a Team Drive in the Gdrive webui.
-2) Find the Team Drive ID— \e[032it looks like this:\e[0m
-   https://drive.google.com/drive/folders/\e[084g3BHcoUu8IHgWUo5PSA\e[0m
+2) Find the Team Drive ID— [32mit looks like this:[0m
+   https://drive.google.com/drive/folders/[32m084g3BHcoUu8IHgWUo5PSA[0m
 ###########################################################
 EOF
 
@@ -96,11 +93,11 @@ EOF
 }
 configure_teamdrive
 configure_teamdrive_share
-
+#configure_personal_share
 
 # configure json's for rclone
 configure_Json
-gdsaList=$(rclone listremotes | sed 's/://' | egrep '^GDSA[0-9]+$')
+gdsaList=$(rclone listremotes --config /root/.config/rclone/rclone.conf | sed 's/://' | egrep '^GDSA[0-9]+$')
 [[ -z $gdsaList ]] && log "Rclone Configuration Failure." FAIL && exit 1
 
 
@@ -111,7 +108,7 @@ function validate_json(){
   for gdsa in $gdsaList; do
     s=0
     start_spinner "Validating: ${gdsa}"
-    rclone touch ${gdsa}:/.test &>/tmp/.SA_error.log.tmp && s=1
+    rclone touch ${gdsa}:${rootDir}/SA_validate &>/tmp/.SA_error.log.tmp && s=1
     if [[ $s == 1 ]]; then
       stop_spinner 0
     else
@@ -132,4 +129,4 @@ function validate_json(){
 }
 validate_json
 
-echo "[DBUG] config script end. run supertransfer_redux.sh to initiate upload."
+echo "[DBUG] config script end."

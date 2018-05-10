@@ -14,12 +14,25 @@
 
 **Mission Statement:** PlexGuide is an all-in-one media solution that deploys a Media Server through the use of your Local HD or Google Drive; serving as an unlimited back-end storage. PlexGuide utilizes Ansible and Docker to streamline your Media Server, while deploying multiple tools for your Server Operations.
 
-**To The Point:** We make your life easy by automating as much as we can so you can spend less time coding and more time watching!
+<p align="center"><kbd><img src="https://plexguide.com/media/pg2-gif.116/full"></kbd></p>
+
+**Human Speak:** We make your life easy by automating as much as we can so you can spend less time coding and more time watching!
 
 [**The PlexGuide Wiki:**](https://github.com/Admin9705/PlexGuide.com-The-Awesome-Plex-Server/wiki) There are a series of topics that you should read to assist you! EVERYONE has rights to edit and/or build new wiki pages.  What you know may save everyone time!
 
 <p align="center"><b>Manage PlexGuide - AnyTime, Anywhere!</b></p>
 <p align="center"><kbd><img src="https://plexguide.com/media/snip20180424_194-png.75/full"></kbd></p>
+
+----
+
+## Vision Statement
+
+The PlexGuide Project is built by new coders for the newest of users! We strive to ensure that our community at all time is friendly, open, and always considerate of others regardless of experience levels.  Unlike most projects, we welcome the newest of coders because we all learn and rise together!  
+
+SuperTransfer Author Concept Below: [Flicker-Rate](https://github.com/flicker-rate)
+<p align="center"><kbd><img src="https://user-images.githubusercontent.com/37129444/39414593-9faa5d18-4bf6-11e8-8b83-0ade87c72ee3.gif"></kbd></p>
+
+----
 
 ## Testimonials
 
@@ -58,6 +71,7 @@
 | Feb 2018   | PG Update system built in for better updating
 | Mar 2018   | Flicker-Rate Advances Project; Overhauling Wiki, Created SuperSpeed, and Network Tuning
 | Apr 2018   | DesignGears & Admin9705 implemented PG's Traefik V2 for wildcard SSL 
+| May 2018   | Support UB18 - Advance Cron Jobs, Backups, and added PG Multi-Image Select! 
 
 ----
 
@@ -65,7 +79,3 @@ Below is a Funny, but True Process Made By [Flicker-Rate](https://github.com/fli
 
 ----
 [![N|Solid](https://i.imgur.com/chNkIx6.png)](https://plexguide.com/threads/pg-build-guide-which-programs-do-i-pick.759/)
-
-----
-
-- Additional Credits & Thank You's: https://plexguide.com/threads/plexguide-thank-yous-in-addition.244

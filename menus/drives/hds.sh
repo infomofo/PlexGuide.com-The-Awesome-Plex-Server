@@ -15,25 +15,27 @@
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-######## This is a ONE TIME MENU
 export NCURSES_NO_UTF8_ACS=1
 
-#### Proof of concept, delete these 4 lines later
-mkdir -p /var/plexguide/hd 1>/dev/null 2>&1
+hd1=$( cat /var/plexguide/hd.1 )
+hd2=$( cat /var/plexguide/hd.2 )
+hd3=$( cat /var/plexguide/hd.3 )
+hd4=$( cat /var/plexguide/hd.4 )
 
-hd1=$( cat /var/plexguide/hd/hd1 )
-hd2=$( cat /var/plexguide/hd/hd2 )
-hd3=$( cat /var/plexguide/hd/hd3 )
-hd4=$( cat /var/plexguide/hd/hd4 )
+hd1="${hd1::-1}" 
+hd2="${hd2::-1}" 
+hd3="${hd3::-1}" 
+hd4="${hd4::-1}"
 
-HEIGHT=12
+HEIGHT=13
 WIDTH=60
-CHOICE_HEIGHT=6
+CHOICE_HEIGHT=7
 BACKTITLE="Visit PlexGuide.com - Automations Made Simple"
 TITLE="Set Your Mount Paths!"
 
 OPTIONS=(Z "Exit"
-         Y "Clear All Paths"
+         Y "Deploy MultiPath"
+         X "Clear All Paths"
          A "HD1: $hd1"
          B "HD2: $hd2"
          C "HD3: $hd3"
@@ -48,39 +50,31 @@ CHOICE=$(dialog --backtitle "$BACKTITLE" \
 
 case $CHOICE in
     Z)
-      exit
+      exit 
       ;;
     Y)
-      rm -r /var/plexguide/hd/* 1>/dev/null 2>&1
+      ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags drives
+      read -n 1 -s -r -p "Press any key to continue"
+      ;;
+    X)
+      rm -r /var/plexguide/hd.* 1>/dev/null 2>&1
       ;;
     A)
       echo "1" > /tmp/hd.drive
-      bash /opt/plexguide/menus/drives/path.sh
+      bash /opt/plexguide/menus/drives/paths.sh
       ;;
     B)
       echo "2" > /tmp/hd.drive
-      bash /opt/plexguide/menus/drives/path.sh
+      bash /opt/plexguide/menus/drives/paths.sh
       ;;
     C)
       echo "3" > /tmp/hd.drive
-      bash /opt/plexguide/menus/drives/path.sh
+      bash /opt/plexguide/menus/drives/paths.sh
       ;;
     D)
       echo "4" > /tmp/hd.drive
-      bash /opt/plexguide/menus/drives/path.sh
+      bash /opt/plexguide/menus/drives/paths.sh
       ;;
 esac
 
-###/mnt/move=RW:/mnt/plexdrive=RO
-
-dr1="$hd1=RW:"
-dr2="$hd2=RW:"
-dr3="$hd3=RW:"
-dr4="$hd4=RW:"
-
-combined="$dr1$dr2$dr3$dr4"
-combined=${combined::-1} 
-echo "$combined" > /var/plexguide/hd/combined
 bash /opt/plexguide/menus/drives/hds.sh
-
-#ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags drives

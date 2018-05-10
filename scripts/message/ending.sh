@@ -30,13 +30,7 @@ EOF
 
 cat << "EOF"
 ┌─────────────────────────────────────┐
-│        -== PlexGuide Team ==-       │
-│                                     │
-│   Admin9705, Deiteq, The Creator    │
-│    Davaz, DataMonkeh, DesignGears   │
-│        Pentagonos, RXWatcher        │
-│      Flicker-Rate, JackalBlood      │
-│                                     │
+│        -== Team PlexGuide ==-       │
 │ ————————————————————————————————————│
 │ Star PG:      github.plexguide.com  │
 │ PG Discord:   discord.plexguide.com │
@@ -45,7 +39,8 @@ cat << "EOF"
 │ Restart Plexguide:        plexguide │
 │ Update Plexguide:         pgupdate  │
 │ Update to Dev Version:    pgdev     │
-│ [32mNEW![0m PG System Monitor:   pgstatus  │
+│ [32mNEW![0m Delete Dupes:        pgdupes   │
+│ [32mNEW![0m Add Content :        pgtrak    │
 └─────────────────────────────────────┘
 
 EOF

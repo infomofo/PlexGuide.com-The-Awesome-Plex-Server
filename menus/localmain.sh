@@ -85,9 +85,31 @@ case $CHOICE in
               exit
             fi
 
+############ If Not Installed
+if [ "$deploy" == "drives" ]
+  then
+    clear 1>/dev/null 2>&1
+  else
+file="/usr/bin/mergerfs" 1>/dev/null 2>&1
+  if [ -e "$file" ]
+    then
+  echo "" 1>/dev/null 2>&1
+    else
+dialog --infobox "Installing MergerFS!" 7 50
+wget "https://github.com/trapexit/mergerfs/releases/download/2.24.2/mergerfs_2.24.2.ubuntu-xenial_amd64.deb" #1>/dev/null 2>&1sudo
+apt-get install g++ pkg-config git git-buildpackage pandoc debhelper libfuse-dev libattr1-dev -y #1>/dev/null 2>&1
+git clone https://github.com/trapexit/mergerfs.git #1>/dev/null 2>&1
+cd mergerfs
+make clean #1>/dev/null 2>&1
+make deb #1>/dev/null 2>&1
+cd .. 
+dpkg -i mergerfs*_amd64.deb #1>/dev/null 2>&1
+rm mergerfs*_amd64.deb mergerfs*_amd64.changes mergerfs*.dsc mergerfs*.tar.gz #1>/dev/null 2>&1
+fi 
+fi
+
             #### Multiple Editions HD
             bash /opt/plexguide/menus/drives/hds.sh
-            ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags drives
             ;;
         D)
             bash /opt/plexguide/menus/info-tshoot/infodrives.sh 
@@ -103,9 +125,7 @@ case $CHOICE in
             bash /opt/plexguide/scripts/message/ending.sh
             exit 0 ;;
         H)
-            rm -r /var/plexguide/pg.edition 
-            bash /opt/plexguide/scripts/baseinstall/edition.sh 
-            exit 0 ;;
+            bash /opt/plexguide/scripts/baseinstall/edition.sh ;;
         I)
             bash /opt/plexguide/menus/donate/main.sh ;;
         Z)

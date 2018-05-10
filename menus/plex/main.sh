@@ -39,23 +39,34 @@ if dialog --stdout --title "PAY ATTENTION!" \
   --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
   --yesno "\nIs this Server a REMOTE SERVER (Non-Local)?" 7 50; then
 
+    if dialog --title "IF YOU DON'T KNOW, SAY -NO- HERE!!!" \
+        --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
+        --yesno "\nAre you using a CDN (Content Delivery Network)?\n\nIF YOU DON'T KNOW WHAT THIS IS, SAY -NO- HERE!!!" 0 0; then
 
-    # NOTE: This needs better explanining on the wiki or somewhere, confuses people
-    ######### Moved for remote server use; unless tracking how use local
-    #if dialog --stdout --title "Custom Access URL" \
-    #       --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
-    #       --yesno "\nDo you want to use a Custom Access URL?\n\nSELECT NO: if you are NOT using Cloudflare or some other CDN. If you do not understand the question, SELECT NO." 0 0; then
-                    
+        if dialog --stdout --title "Do you need a Custom Access URL?" \
+                --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
+                --yesno "\nDo you need to use a Custom Access URL?\n\nThis is for Cloudflare Reverse Proxy.\n\nIf you don't know what this is, SELECT NO!!!" 0 0; then
 
-                   # dialog --title "Input CUSTOM ACCESS URL:" \
-                   # --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
-                   # --inputbox "URL?" 8 70 2>/var/plexguide/plex.url
-                   # plexurl=$(cat /var/plexguide/plex.url)
-                   # dialog --infobox "URL: $plexurl" 3 70
-                   # sleep 2
-    #else
+                   ## Manual Custom Access URL entry
+                   #dialog --title "Input CUSTOM ACCESS URL:" \
+                   #--backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
+                   #--inputbox "Enter your Custom Access URL.\nExample: https://plex.yourdomain.com:443,http://plex.yourdomain.com:80" 0 0 2>/var/plexguide/plex.url
+                   #plexurl=$(cat /var/plexguide/plex.url)
+                   #dialog --infobox "URL: $plexurl" 0 0
+                   #sleep 2
+
+                   ## Automatic Custom Access URL creation
+                   plexurl="https://plex.$domain:443,http://plex.$domain:80"
+                   echo "$plexurl" > /var/plexguide/plex.url
+                   dialog --infobox "Custom Access URL: $plexurl" 0 0
+                   sleep 5
+
+        else
             echo "default" > /var/plexguide/plex.url 1>/dev/null 2>&1
-    #fi
+        fi
+    else
+        echo "default" > /var/plexguide/plex.url 1>/dev/null 2>&1
+    fi
 
     if dialog --stdout --title "PAY ATTENTION!" \
       --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
@@ -66,17 +77,17 @@ if dialog --stdout --title "PAY ATTENTION!" \
 
         dialog --title "Input >> PLEX CLAIM" \
         --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
-        --inputbox "Token? Windows Users - SHIFT + INSERT to PASTE" 8 50 2>/tmp/plextoken
-        plextoken=$(cat /tmp/plextoken)
+        --inputbox "Token? Windows Users - SHIFT + INSERT to PASTE" 8 50 2>/var/plexguide/plextoken
+        plextoken=$(cat /var/plexguide/plextoken)
         dialog --infobox "Token: $plextoken" 3 45
         sleep 2
         touch /tmp/server.check 1>/dev/null 2>&1
     else
-       echo "claimedalready" > /tmp/plextoken 1>/dev/null 2>&1
+       echo "claimedalready" > /var/plexguide/plextoken 1>/dev/null 2>&1
        touch /tmp/server.check 1>/dev/null 2>&1
     fi
 else
-    echo "claimedalready" > /tmp/plextoken 1>/dev/null 2>&1
+    echo "claimedalready" > /var/plexguide/plextoken 1>/dev/null 2>&1
 fi
 
 HEIGHT=10
@@ -101,7 +112,7 @@ CHOICE=$(dialog --clear \
 clear
 case $CHOICE in
         A)
-                echo "latest" > /tmp/plextag
+                echo "latest" > /var/plexguide/plextag
                 dialog --infobox "Selected Tag: Latest" 3 38
                 sleep 2
 
@@ -129,8 +140,8 @@ case $CHOICE in
 
                 dialog --title "Input >> Tag Version" \
                 --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
-                --inputbox "Windows Users - SHIFT + INSERT to PASTE" 8 40 2>/tmp/plextag
-                plextag=$(cat /tmp/plextag)
+                --inputbox "Windows Users - SHIFT + INSERT to PASTE" 8 40 2>/var/plexguide/plextag
+                plextag=$(cat /var/plexguide/plextag)
                 dialog --infobox "Typed Tag: $plextag" 3 45
                 sleep 2
 

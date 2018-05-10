@@ -3,7 +3,7 @@
 # [PlexGuide Menu]
 #
 # GitHub:   https://github.com/Admin9705/PlexGuide.com-The-Awesome-Plex-Server
-# Author:   Admin9705 - Deiteq
+# Author:   Admin9705
 # URL:      https://plexguide.com
 #
 # PlexGuide Copyright (C) 2018 PlexGuide.com
@@ -22,27 +22,8 @@ version=$( cat /var/plexguide/pg.version ) 1>/dev/null 2>&1
 path=$( cat /var/plexguide/server.hd.path ) 1>/dev/null 2>&1
 deploy=$( cat /var/plexguide/pg.server.deploy ) 1>/dev/null 2>&1
 
-if [ "$deploy" == "drives" ]
-  then
-    clear 1>/dev/null 2>&1
-  else
 ############################################################################# MINI MENU SELECTION - END
-    dialog --title "-- Solo Deployment --" --msgbox "\nWe have detected that you are setting up or establishing the Multi-HD Deployment!\n\nClick OK to Continue!" 0 0
-
-  #Ensure Solo Edition's Path is /mnt
-  #if [ "$edition" == "PG Edition: HD Solo" ]
-  #  then
-    #### If not /mnt, it will go through this process to change it!
-  #  if [ "$path" == "/mnt" ] 
-  #    then
-  #      clear 1>/dev/null 2>&1
-  #    else
-  #      dialog --title "-- NOTE --" --msgbox "\nWe have detected that /mnt IS NOT your default DOWNLOAD PATH for this EDITION.\n\nWe will fix that for you!" 0 0
-  #      echo "no" > /var/plexguide/server.hd
-  #      echo "/mnt" > /var/plexguide/server.hd.path
-  #      bash /opt/plexguide/scripts/baseinstall/rebuild.sh
-  #  fi
-  #fi
+dialog --title "-- Solo Deployment --" --msgbox "\nWe have detected that you are setting up or establishing the Multi-HD Deployment!\n\nClick OK to Continue!" 0 0
 
   #### Disable Certain Services #### put a detect move.service file here later
   systemctl stop move 1>/dev/null 2>&1

@@ -15,15 +15,15 @@
 #   under the GPL along with build & install instructions.
 #
 #################################################################################
-  hd=$( cat /tmp/hd.drive )
+  number=$( cat /tmp/hd.drive )
 
   dialog --title "HD Selection" --msgbox "\nYou Selected: Yes, and I am Ready!\n\nThis you named and can access your HD! If you botch the name, visit SETTINGS and change ANYTIME!" 0 0
   echo "yes" > /var/plexguide/server.hd
 
   dialog --title "SET FULL PATH [ EXAMPLE: /hd2/media or /hd2 ]" \
   --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
-  --inputbox "Full Path: " 8 50 2>/var/plexguide/hd/hd$hd
-  path=$(cat /var/plexguide/server.hd.path)
+  --inputbox "Full Path: " 8 50 2>/var/plexguide/hd.$number
+  path=$(cat /var/plexguide/hd.$number)
 
   if dialog --stdout --title "PG Path Builder" \
         --backtitle "Visit https://PlexGuide.com - Automations Made Simple" \
@@ -37,7 +37,7 @@
             pathe="$path"
             path="/$path"
             dialog --title "PG Error Checking" --msgbox "\nForgot to add a FORWARD SLASH in the beginning!\n\nOLD PATH:\n$pathe\n\nNEW PATH:\n$path" 0 0
-            echo "$path" > "/var/plexguide/hd/hd$hd"
+            echo "$path" > "/var/plexguide/hd.$number"
       fi
   
     ##### If BONEHEAD added a / at the end, we fix for them  
@@ -47,7 +47,7 @@
             pathe="$path"
             path=${path::-1} 
             dialog --title "PG Error Checking" --msgbox "\nADDED a FORWARD SLASH to the END! Not Needed!\n\nOLD PATH:\n$pathe\n\nNEW PATH:\n$path" 0 0
-            echo "$path" > "/var/plexguide/hd/hd$hd"
+            echo "$path" > "/var/plexguide/hd.$number"
       fi
 
     ##### READ / WRITE CHECK
@@ -56,11 +56,13 @@
     file="$path/plexguide"
     if [ -e "$file" ]
       then
+        rm -r "$path/plexguide"
         dialog --title "PG Path Checker" --msgbox "\nPATH: $path\n\nThe PATH exists! We are going to CHMOD & CHOWN the path for you!" 0 0
         chown 1000:1000 "$path"
         chmod 0775 "$path"
       else
         dialog --title "PG Path Checker" --msgbox "\nPATH: $path\n\nTHE PATH does not EXIST! Re-Running Menu!" 0 0
+        echo "" > /var/plexguide/hd.$number
         bash /opt/plexguide/menus/drives/hds.sh
         exit
     fi

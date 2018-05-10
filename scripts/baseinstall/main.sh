@@ -108,8 +108,6 @@ echo "37" | dialog --gauge "Installing: PlexGuide Folders" 7 50 0
 ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags folders 1>/dev/null 2>&1
 #read -n 1 -s -r -p "Press any key to continue "
 
-
-
 echo "43" | dialog --gauge "Installing: PlexGuide Labeling" 7 50 0
 ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags label 1>/dev/null 2>&1
 #read -n 1 -s -r -p "Press any key to continue "
@@ -118,15 +116,29 @@ ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags label 1>/dev/null 2
 docker --version | awk '{print $3}' > /var/plexguide/docker.version
 docker_var=$( cat /var/plexguide/docker.version )
 
-if [ "$docker_var" == "18.03.0-ce," ]
+if [ "$docker_var" == "18.03.1-ce," ]
 then
   echo "50" | dialog --gauge "Docker Is Already Installed" 7 50 0
   sleep 2
   #read -n 1 -s -r -p "Press any key to continue "
 else
-  echo "50" | dialog --gauge "Installing: Docker 18.03 (Please Be Patient)" 7 54 0
+
+docver=$( cat /var/plexguide/ub.ver )
+
+  if [ "$docver" == "16" ]
+    then
+  echo "50" | dialog --gauge "Installing: UB16 - Docker 18.03 (Please Be Patient)" 7 58 0
   ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags docker 1>/dev/null 2>&1
   #read -n 1 -s -r -p "Press any key to continue "
+  fi
+
+  if [ "$docver" == "18" ]
+    then
+  echo "50" | dialog --gauge "Installing: UB18 - Docker 18.03 (Please Be Patient)" 7 58 0
+  ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags docker18 1>/dev/null 2>&1
+  #read -n 1 -s -r -p "Press any key to continue "
+  fi
+
 fi
 
 ############################################################ Checks to See if Docker Installed; if not... FAIL!
@@ -147,29 +159,36 @@ bash /opt/plexguide/scripts/startup/rclone-preinstall.sh &>/dev/null &
 touch /var/plexguide/basics.yes &>/dev/null &
 sleep 1
 
-echo "78" | dialog --gauge "Installing: Auto-Delete" 7 50 0
+echo "77" | dialog --gauge "Installing: Auto-Delete" 7 50 0
 bash /opt/plexguide/scripts/autodelete/install.sh &>/dev/null &
 sleep 1
 
-echo "81" | dialog --gauge "Installing: Portainer" 7 50 0
+echo "79" | dialog --gauge "Installing: Portainer" 7 50 0
 ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags portainer &>/dev/null &
 sleep 1
 echo "Portainer Installed - Goto Port 9000 and Set Your Password!" > /tmp/pushover
 ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags pushover &>/dev/null &
 
 ############################################################ Reboot Startup Container Script
-echo "84" | dialog --gauge "Installing: Docker Startup Assist" 7 50 0
+echo "82" | dialog --gauge "Installing: Docker Startup Assist" 7 50 0
 ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags dockerfix 1>/dev/null 2>&1
 #read -n 1 -s -r -p "Press any key to continue "
 
-echo "87" | dialog --gauge "Forcing Reboot of Existing Containers!" 7 50 0
+echo "85" | dialog --gauge "Forcing Reboot of Existing Containers!" 7 50 0
 bash /opt/plexguide/scripts/containers/reboot.sh &>/dev/null &
 #read -n 1 -s -r -p "Press any key to continue "
 sleep 2
 
-echo "89" | dialog --gauge "Installing: WatchTower" 7 50 0
-ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags watchtower &>/dev/null &
-sleep 2
+echo "88" | dialog --gauge "Installing: WatchTower" 7 50 0
+##### Traefik Process
+file="/var/plexguide/watchtower.yes"
+if [ -e "$file" ]
+    then
+      ansible-playbook /opt/plexguide/ansible/plexguide.yml --tags watchtower &>/dev/null &
+      sleep 2
+    else
+      bash /opt/plexguide/menus/watchtower/main.sh
+fi
 
 echo "91" | dialog --gauge "Installing: Python Support" 7 50 0
 bash /opt/plexguide/scripts/baseinstall/python.sh 1>/dev/null 2>&1
@@ -211,6 +230,7 @@ sleep 2
         bash /opt/plexguide/menus/donate/main.sh
     fi
 
+touch /var/plexguide/donation.yes 1>/dev/null 2>&1
 cat /var/plexguide/pg.preinstall > /var/plexguide/pg.preinstall.stored
 
 echo "PG Install is Complete" > /tmp/pushover

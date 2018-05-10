@@ -1,5 +1,5 @@
 #!/bin/bash
-#source settings.conf
+#source /opt/plexguide/scripts/supertransfer/settings.conf
 # functions:
 # cat_Art() - init msg
 # upload_Json() - configure with new jsons
@@ -17,7 +17,7 @@ cat <<ART
         /_/    [1;39;2mLoad Balanced Multi-SA Gdrive Uploader
 [0m
 ┌────────────────────────────────────────────────────────┐
-│ Version               :   Beta 2.1 Secret Edition      │
+│ Version               :   Beta 2.6 Secret Edition      │
 │ Author                :   Flicker-Rate                 │
 │ Special Thanks        :   ddurdle, John Doe            │
 │ —————————————————————————————————————————————————————— │
@@ -39,10 +39,35 @@ cat <<ART
         /_/           [1;39;2mRclone Configurator For Plexguide
 [0m
 ┌────────────────────────────────────────────────────────┐
-│ Version               :   Beta 2.1                     │
+│ Version               :   Beta 2.6                     │
 │ Author                :   Flicker-Rate                 │
 └────────────────────────────────────────────────────────┘
 
+ART
+}
+cat_pasta(){
+cat <<ART
+         _.--.__                                             _.--.
+    ./'       `--.__                                   ..-'   ,'
+  ,/               |`-.__                            .'     ./
+ :,                 :    `--_    __                .'   ,./'_.....
+ :                  :   /    `-:' _\.            .'   ./..-'   _.'
+ :                  ' ,'       : / \ :         .'    `-'__...-'
+ `.               .'  .        : \@/ :       .'       '------.,
+    ._....____  ./    :     .. `     :    .-'      _____.----'
+              `------------' : |     `..-'        `---.
+                         .---'  :    ./      _._-----'
+.---------._____________ `-.__/ : /`      ./_-----/':
+`---...--.              `-_|    `.`-._______-'  /  / ,-----.__----.
+   ,----' ,__.  .          |   /  `\.________./  ====__....._____.'
+   `-___--.-' ./. .-._-'----\.                  ./.---..____.--.
+         :_.-' '-'            `..            .-'===.__________.'
+                               __`--...__.--'            ____
+   _______  ______  ___  _____/ /__________ _____  _____/ __/__  _____
+  / ___/ / / / __ \/ _ \/ ___/ __/ ___/ __ `/ __ \/ ___/ /_/ _ \/ ___/
+ (__  ) /_/ / /_/ /  __/ /  / /_/ /  / /_/ / / / (__  ) __/  __/ /
+/____/\__,_/ .___/\___/_/   \__/_/   \__,_/_/ /_/____/_/  \___/_/
+          /_/
 ART
 }
 
@@ -110,8 +135,8 @@ read -p "View Error Log? y/n>" answer
 }
 
 upload_Json(){
-source settings.conf
-source usersettings.conf
+source /opt/plexguide/scripts/supertransfer/settings.conf
+source ${userSettings}
 [[ ! -e $jsonPath ]] && mkdir $jsonPath && log 'Json Path Not Found. Creating.' INFO && sleep 0.5
 [[ ! -e $jsonPath ]] && log 'Json Path Could Not Be Created.' FAIL && sleep 0.5
 
@@ -171,30 +196,79 @@ configure_teamdrive_share(){
 source $userSettings
 [[ ! $(ls $jsonPath | egrep .json$)  ]] && log "configure_teamdrive_share : no jsons found" FAIL && exit 1
 [[ -z $teamDrive  ]] && log "configure_teamdrive_share : no teamdrive found in config" FAIL && exit 1
-grep \"client_email\" ${jsonPath}/*.json | cut -f4 -d'"' > /tmp/clientemails
+printf "$(grep \"client_email\" ${jsonPath}/*.json | cut -f4 -d'"')\t" > /tmp/clientemails
 count=$(cat /tmp/clientemails | wc -l)
 cat <<EOF
 ############ CONFIGURATION ################################
-1) If you haven't done so, create a teamdrive
-2) Go to your teamdrive and share your folder with the $count
-   following emails:
+2) In your gdrive, share your teamdrive with
+   the $count following emails:
+      - tip: uncheck "notify people" & check "prevent editors..."
+      - tip: ignore "sharing outside of org warning"
+
 ###########################################################
 EOF
-
-read -p 'Would you like to list them one at a time? y/n> ' answer
-if [[ $answer =~ [y|Y|yes|Yes] ]]; then
-  echo 'OK, press any key to see the next one.'
-  while read -r line; do
-    read -p "$line"
-  done </tmp/clientemails
-else
-  less /tmp/clientemails
-fi
+read -p 'Press Any Key To See The Emails'
+cat /tmp/clientemails
+echo
+echo 'NOTE: you can copy and paste the whole chunk at once'
+echo 'If you need to see them again, they are in /tmp/clientemails'
+read -p 'Press Any Key To Continue.'
+return 0
 }
 
+configure_personal_share(){
+source $userSettings
+[[ ! $(ls $jsonPath | egrep .json$)  ]] && log "configure_personal_share : no jsons found" FAIL && exit 1
+printf "$(grep \"client_email\" ${jsonPath}/*.json | cut -f4 -d'"')\t" > /tmp/clientemails
+count=$(cat /tmp/clientemails | wc -l)
+echo "tip: by default, PG stores media in gdrive on root"
+read -p 'Would you like to change where media is stored? y/n> ' answer
+if [[ $answer =~ [y|Y|yes|Yes] ]]; then
+cat <<EOF
+############ CONFIGURATION ################################
+1) Create a directory structure like so in your gdrive:
+
+   |___media       <--- rename whatever you like
+   | |____movies
+   | |____tv
+   | |____etc...
+
+NOTE: root_folder is optional, you can put movies into
+      /movies , tv into /tv if you want.
+NOTE: you can drag and drop existing movies/tv folders here.
+###########################################################
+EOF
+echo "Example: /media     Example2: /data"
+read -p 'Enter the name of your root folder for media: ' root
+[[ $root == '/' || -z $root ]] && root=''
+rootclean=$(sed 's/\//\\\//g' <<<$root)
+sed -i '/'^rootDir'=/ s/=.*/='${rootclean}'/' $userSettings
+echo
+fi
+
+cat <<EOF
+############ CONFIGURATION ################################
+2) In your gdrive, share your $root folder with
+   the $count following emails:
+      - tip: uncheck "notify" & check "prevent editors..."
+      - tip: ignore "sharing outside of org warning"
+
+###########################################################
+EOF
+read -p 'Press Any Key To See The Emails'
+cat /tmp/clientemails
+echo
+echo 'NOTE: you can copy and paste the whole chunk at once'
+echo 'If you need to see them again, they are in /tmp/clientemails'
+read -p 'Press Any Key To Continue.'
+return 0
+}
 
 configure_Json(){
-rclonePath=$(rclone -h | grep 'Config file. (default' | cut -f2 -d'"')
+source ${userSettings}
+#rclonePath=$(rclone -h | grep 'Config file. (default' | cut -f2 -d'"')
+rclonePath='/root/.config/rclone/rclone.conf'
+[[ -e ${rclonePath} ]] || mkdir -p ${rclonePath}
 [[ ! $(ls $jsonPath | egrep .json$) ]] && log "No Service Accounts Json Found." FAIL && exit 1
 # add rclone config for new keys if not already existing
 for json in ${jsonPath}/*.json; do
@@ -221,7 +295,8 @@ return 0
 
 # purge rclone of SA's
 purge_Rclone(){
-  rclonePath=$(rclone -h | grep 'Config file. (default' | cut -f2 -d'"')
+#  rclonePath=$(rclone -h | grep 'Config file. (default' | cut -f2 -d'"')
+rclonePath='/root/.config/rclone/rclone.conf'
   del=0
   while read line; do
     if [[ $line == '' ]]; then

@@ -2,13 +2,16 @@
 - hosts: localhost
 
   roles:
+  - { role: lounge, tags: ['lounge'] }
   - { role: deploy, tags: ['deploy'] }
+  - { role: pgtrak, tags: ['pgtrak']}
   - { role: backup, tags: ['backup'] }
   - { role: autodelete, tags: ['autodelete'] }
   - { role: restore, tags: ['restore'] }
   - { role: restoremass, tags: ['restoremass'] }
+  - { role: plextest, tags: ['plextest', 'plextest'] }
   - { role: netdata, tags: ['netdata', 'monitor'] }
-  - { role: cadvisor, tags: ['cadvisor', 'monitor'] }  
+  - { role: cadvisor, tags: ['cadvisor', 'monitor'] }
   - { role: prometheus, tags: ['prometheus', 'monitor'] }
   - { role: grafana, tags: ['grafana', 'monitor'] }
   - { role: pushover, tags: ['pushover'] }
@@ -16,15 +19,20 @@
   - { role: tautulli, tags: ['tautulli'] }
   - { role: nzbget, tags: ['nzbget'] }
   - { role: rutorrent, tags: ['rutorrent'] }
-  - { role: nzbhydra, tags: ['nzbhydra'] }
-  - { role: variables, tags: ['variables'] }
   - { role: nzbhydra2, tags: ['nzbhydra2'] }
+  - { role: variables, tags: ['variables'] }
   - { role: muximux, tags: ['muximux'] }
-  - { role: dupefinder, tags: ['dupefinder'] }
+  - { role: cache, tags: ['cache'] }
+  - { role: encache, tags: ['encache'] }
+  - { role: pgdupes, tags: ['pgdupes'] }
   - { role: plexdrive, tags: ['plexdrive'] }
   - { role: sabnzbd, tags: ['sabnzbd'] }
   - { role: transfer, tags: ['transfer'] }
+  - { role: cloudcmd, tags: ['cloudcmd'] }
+  - { role: deploy2, tags: ['deploy2'] }
+  - { role: calibre, tags: [' calibre'] }
   - { role: supertransfer, tags: ['supertransfer'] }
+  - { role: supertransfer2, tags: ['supertransfer2'] }
   - { role: support, tags: ['support'] }
   - { role: organizr, tags: ['organizr'] }
   - { role: ombi, tags: ['ombi'] }
@@ -39,6 +47,8 @@
   - { role: sonarr, tags: ['sonarr'] }
   - { role: sonarr4k, tags: ['sonarr4k'] }
   - { role: radarr, tags: ['radarr'] }
+  - { role: remove, tags: ['remove'] }
+  - { role: docker18, tags: ['docker18'] }
   - { role: radarr4k, tags: ['radarr4k'] }
   - { role: lidarr, tags: ['lidarr'] }
   - { role: deluge, tags: ['deluge'] }
@@ -79,3 +89,4 @@
   - { role: booksonic, tags: ['booksonic'] }
   - { role: duplicati, tags: ['duplicati'] }
   - { role: headphones, tags: ['headphones'] }
+  - { role: utorrent, tags: ['utorrent'] }
